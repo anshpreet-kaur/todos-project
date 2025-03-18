@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\TaskRequest;
 
 class TaskController extends Controller
 {
@@ -23,15 +24,8 @@ class TaskController extends Controller
         return view('tasks.create');
     }
 
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Pending,In Progress,Completed',
-            'deadline' => 'required|date',
-            'type' => 'required|in:Work,Personal,Urgent',
-        ]);
 
         Task::create([
             'user_id' => Auth::id(),
@@ -53,19 +47,11 @@ class TaskController extends Controller
         return view('tasks.edit', compact('task'));
     }
 
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
         if ($task->user_id !== Auth::id()) {
             abort(403);
         }
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Pending,In Progress,Completed',
-            'deadline' => 'required|date',
-            'type' => 'required|in:Work,Personal,Urgent',
-        ]);
 
         $task->update($request->all());
 
