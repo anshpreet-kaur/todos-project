@@ -53,7 +53,7 @@
                             @endif
                         @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tasks') }}">Tasks</a>
+                            <a class="nav-link" href="{{ route('tasks.index') }}">Tasks</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('profile') }}">My Profile</a>

@@ -23,12 +23,11 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::middleware(['auth'])->group(function () {
     Route::resource('tasks', TaskController::class);
-    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks');
+    // Route::get('/tasks', [TaskController::class, 'index'])->name('tasks');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
 
 });
+
