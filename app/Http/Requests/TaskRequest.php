@@ -24,6 +24,7 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // 'title.required' => 'abc is required.',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:Pending,In Progress,Completed',
