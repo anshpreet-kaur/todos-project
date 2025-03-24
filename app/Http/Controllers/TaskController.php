@@ -5,6 +5,7 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\TaskRequest;
+use App\Models\Category;
 
 class TaskController extends Controller
 {
@@ -18,45 +19,62 @@ class TaskController extends Controller
         $tasks = Task::where('user_id', Auth::id())->get();
         return view('tasks.index', compact('tasks'));
     }
+//     public function create()
+// {
+//     $tasks = Task::where('user_id', Auth::id())->get();
+//     return view('tasks.create', compact('tasks'));
+// }
+public function create()
+{
+    $categories = Category::where('user_id', Auth::id())->get();
+    $tasks = Task::where('user_id', Auth::id())->get();
+    return view('tasks.create', compact('categories', 'tasks'));
+}
 
-    public function create()
-    {
-        return view('tasks.create');
+public function store(TaskRequest $request)
+{
+    Task::create([
+        'user_id' => Auth::id(),
+        'title' => $request->title,
+        'category_id' => $request->category_id,
+        'parent_id' => $request->parent_id,
+        'description' => $request->description,
+        'status' => $request->status,
+        'deadline' => $request->deadline,
+        'type' => $request->type,
+    ]);
+
+    return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+}
+public function edit(Task $task)
+{
+    if ($task->user_id !== Auth::id()) {
+        abort(403); // Prevent unauthorized access
     }
 
-    public function store(TaskRequest $request)
-    {
+    // Fetch all categories for the dropdown
+    $categories = Category::where('user_id', Auth::id())->get();
 
-        Task::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'description' => $request->description,
-            'status' => $request->status,
-            'deadline' => $request->deadline,
-            'type' => $request->type,
-        ]);
+    // Fetch all tasks except the current one to prevent self-referencing
+    $tasks = Task::where('user_id', Auth::id())
+        ->where('id', '!=', $task->id) // Exclude current task
+        ->get();
 
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+    return view('tasks.edit', compact('task', 'categories', 'tasks'));
+}
+
+
+
+public function update(TaskRequest $request, Task $task)
+{
+    if ($task->user_id !== Auth::id()) {
+        abort(403);
     }
 
-    public function edit(Task $task)
-    {
-        if ($task->user_id !== Auth::id()) {
-            abort(403); // Prevent editing others' tasks
-        }
-        return view('tasks.edit', compact('task'));
-    }
+    $task->update($request->all());
 
-    public function update(TaskRequest $request, Task $task)
-    {
-        if ($task->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $task->update($request->all());
-
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
-    }
+    return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+}
 
     public function destroy(Task $task)
     {

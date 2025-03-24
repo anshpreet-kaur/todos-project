@@ -56,7 +56,13 @@
                             <a class="nav-link" href="{{ route('tasks.index') }}">Tasks</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile') }}">My Profile</a>
+                            <a class="nav-link" href="{{ route('categories.index') }}">categories</a>
+                        </li>
+                        <li class="nav-item">
+                            {{-- <a class="nav-link" href="{{ route('profile') }}">My Profile</a> --}}
+                            <a class="nav-link" href="{{ route('profile.show') }}">My Profile</a>
+                            {{-- <a href="{{ route('profile.show') }}">My Profile</a> --}}
+
                         </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

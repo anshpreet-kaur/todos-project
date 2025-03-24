@@ -26,6 +26,7 @@ class TaskRequest extends FormRequest
         return [
             // 'title.required' => 'abc is required.',
             'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:Pending,In Progress,Completed',
             'deadline' => 'required|date',

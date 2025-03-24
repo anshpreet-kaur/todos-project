@@ -13,6 +13,8 @@
         <thead>
             <tr>
                 <th>Title</th>
+                <th>Category</th>
+                <th>Parent id</th>
                 <th>Status</th>
                 <th>Deadline</th>
                 <th>Type</th>
@@ -23,6 +25,17 @@
             @foreach ($tasks as $task)
             <tr>
                 <td>{{ $task->title }}</td>
+                <td>{{ $task->category ? $task->category->name : 'No Category' }}</td>
+                <td style="margin-left: {{ $task->parent_id ? '20px' : '0' }};">
+                    <strong>{{ $task->title }}</strong>
+                    @if($task->children->count())
+                        <ul>
+                            @foreach($task->children as $child)
+                                <li>{{ $child->title }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    </td>
                 <td>{{ $task->status }}</td>
                 <td>{{ $task->deadline }}</td>
                 <td>{{ $task->type }}</td>

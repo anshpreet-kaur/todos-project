@@ -17,7 +17,27 @@
             <label>Description</label>
             <textarea name="description" class="form-control">{{ $task->description }}</textarea>
         </div>
-
+        <label for="category_id">Category:</label>
+        <select name="category_id" required>
+            <option value="">Select a category</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->id }}" {{ $task->category_id == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        </select>
+        <div class="form-group">
+            <label for="parent_id">Parent Task</label>
+            <select name="parent_id" class="form-control">
+                <option value="">None</option>
+                @foreach($tasks as $parent)
+                    <option value="{{ $parent->id }}" {{ $task->parent_id == $parent->id ? 'selected' : '' }}>
+                        {{ $parent->title }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        
         <div class="form-group">
             <label>Status</label>
             <select name="status" class="form-control">
