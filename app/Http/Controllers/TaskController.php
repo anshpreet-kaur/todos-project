@@ -14,11 +14,39 @@ class TaskController extends Controller
         $this->middleware('auth'); // Protect routes
     }
 
-    public function index()
-    {
-        $tasks = Task::where('user_id', Auth::id())->get();
-        return view('tasks.index', compact('tasks'));
+    // public function index()
+    // {
+    //     $tasks = Task::where('user_id', Auth::id())->get();
+    //     return view('tasks.index', compact('tasks'));
+    // }
+    public function index(Request $request)
+{
+    $query = Task::where('user_id', Auth::id());
+
+    // Filtering
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
+
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
+
+    // Sorting
+    $sort = $request->get('sort', 'deadline');
+    $order = $request->get('order', 'asc');
+    $query->orderBy($sort, $order);
+
+    $tasks = $query->get();
+    $categories = Category::where('user_id', Auth::id())->get();
+
+    return view('tasks.index', compact('tasks', 'categories'));
+}
+
 //     public function create()
 // {
 //     $tasks = Task::where('user_id', Auth::id())->get();
@@ -76,13 +104,21 @@ public function update(TaskRequest $request, Task $task)
     return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
 }
 
-    public function destroy(Task $task)
-    {
-        if ($task->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+public function destroy(Task $task)
+{
+    if ($task->user_id !== Auth::id()) {
+        abort(403);
     }
+
+    // Check if the task has children and reassign their parent_id to null before deleting
+    if ($task->children()->count() > 0) {
+        $task->children()->update(['parent_id' => null]);
+    }
+
+    // Delete only the specific task
+    $task->delete();
+
+    return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+}
+
 }
