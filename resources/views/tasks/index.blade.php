@@ -5,7 +5,7 @@
     <h2>My Tasks</h2>
     <a href="{{ route('tasks.create') }}" class="btn btn-primary mb-3">Add Task</a>
     <div class="mb-3">
-        <form method="GET" action="{{ route('tasks.index') }}" class="form-inline">
+        <form method="GET" action="{{ route('tasks.index') }}" class="form-inline d-flex gap-3">
             <select name="status" class="form-control mb-2 mr-2">
                 <option value="">Filter by Status</option>
                 <option value="Pending">Pending</option>

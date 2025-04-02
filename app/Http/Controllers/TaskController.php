@@ -21,7 +21,7 @@ class TaskController extends Controller
     // }
     public function index(Request $request)
 {
-    $query = Task::where('user_id', Auth::id());
+    $query = Task::with(['category', 'parent', 'children'])->where('user_id', Auth::id());
 
     // Filtering
     if ($request->filled('status')) {
@@ -104,21 +104,34 @@ public function update(TaskRequest $request, Task $task)
     return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
 }
 
-public function destroy(Task $task)
+
+public function destroy($id)
 {
-    if ($task->user_id !== Auth::id()) {
-        abort(403);
-    }
-
-    // Check if the task has children and reassign their parent_id to null before deleting
-    if ($task->children()->count() > 0) {
-        $task->children()->update(['parent_id' => null]);
-    }
-
-    // Delete only the specific task
-    $task->delete();
+    $task = Task::where('user_id', auth()->id())->findOrFail($id);
+    $task->delete(); // ✅ Soft delete the task
 
     return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+}
+
+public function restore($id)
+{
+    $task = Task::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+    $task->restore(); // ✅ Restore the task
+
+    return redirect()->route('tasks.index')->with('success', 'Task restored successfully.');
+}
+public function trashed()
+{
+    // To display deleted tasks with restore and permanent delete options
+    $tasks = Task::onlyTrashed()->where('user_id', auth()->id())->get();
+    return view('tasks.trashed', compact('tasks'));
+}
+public function forceDelete($id)
+{
+    $task = Task::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+    $task->forceDelete(); // ✅ Permanently delete
+
+    return redirect()->route('tasks.index')->with('success', 'Task permanently deleted.');
 }
 
 }

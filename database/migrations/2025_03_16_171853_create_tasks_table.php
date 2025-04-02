@@ -23,6 +23,7 @@ class CreateTasksTable extends Migration
             $table->enum('status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
             $table->date('deadline');
             $table->enum('type', ['Work', 'Personal', 'Urgent'])->default('Work');
+            $table->dropSoftDeletes();
             $table->timestamps();
         });
     }
