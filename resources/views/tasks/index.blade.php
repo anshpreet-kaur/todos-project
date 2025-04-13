@@ -70,8 +70,8 @@
 
                     @endif
                     </td>
-                <td>{{ $task->status }}</td>
-                <td>{{ $task->deadline }}</td>
+                <td class="badge bg-{{ task_status_badge($task->status) }}">{{ task_status_badge($task->status) }}</td>
+                <td class="{{format_task_deadline($task->deadline)}}">{{ format_task_deadline($task->deadline) }}</td>
                 <td>{{ $task->type }}</td>
                 <td>
                     <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning">Edit</a>
